@@ -1,4 +1,4 @@
-@model Part
+@model PartDto
 @{
     ViewData["Title"] = "Delete Part";
 }
@@ -18,10 +18,10 @@
     <dd class="col-sm-9">@Html.DisplayFor(m => m.StockQuantity)</dd>
 
     <dt class="col-sm-3">Manufacturer</dt>
-    <dd class="col-sm-9">@(Model.Manufacturer?.Name ?? "-")</dd>
+    <dd class="col-sm-9">@(Model.ManufacturerName ?? "-")</dd>
 
     <dt class="col-sm-3">Category</dt>
-    <dd class="col-sm-9">@(Model.Category?.Name ?? "-")</dd>
+    <dd class="col-sm-9">@(Model.CategoryName ?? "-")</dd>
 </dl>
 
 <form asp-action="Delete" method="post">

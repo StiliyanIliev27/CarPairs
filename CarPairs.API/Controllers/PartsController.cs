@@ -128,7 +128,7 @@ namespace CarPairs.API.Controllers
                 StockQuantity = p.StockQuantity,
                 ManufacturerName = p.Manufacturer?.Name ?? string.Empty,
                 CategoryName = p.Category?.Name ?? string.Empty,
-                CreateAt = p.CreatedAt.ToString("dd-MM-yyyy HH:mm")
+                CreatedAt = p.CreatedAt.ToString("dd-MM-yyyy HH:mm")
             };
         }
     }

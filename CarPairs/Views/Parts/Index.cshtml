@@ -1,4 +1,4 @@
-@model IEnumerable<Part>
+@model IEnumerable<PartDto>
 @{
     ViewData["Title"] = "Parts";
 }
@@ -27,8 +27,8 @@
                 <td>@Html.DisplayFor(_ => item.Name)</td>
                 <td>@Html.DisplayFor(_ => item.Price)</td>
                 <td>@Html.DisplayFor(_ => item.StockQuantity)</td>
-                <td>@(item.Manufacturer?.Name ?? "-")</td>
-                <td>@(item.Category?.Name ?? "-")</td>
+                <td>@(item.ManufacturerName ?? "-")</td>
+                <td>@(item.CategoryName ?? "-")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Details</a>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Edit</a>

@@ -1,4 +1,4 @@
-@model Part
+@model UpdatePartDto
 @{
     ViewData["Title"] = "Edit Part";
     var manufacturers = ViewData["Manufacturers"] as SelectList ?? new SelectList(new List<SelectListItem>());
@@ -44,11 +44,6 @@
                     <option value="">-- Select Category --</option>
                 </select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="CreatedAt" class="form-label"></label>
-                <input asp-for="CreatedAt" type="datetime-local" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
         </div>
     </div>

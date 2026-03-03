@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CarPairs.API\CarPairs.API.csproj" />
+    <ProjectReference Include="..\CarPairs.Core\CarPairs.Core.csproj" />
   </ItemGroup>
 
 </Project>

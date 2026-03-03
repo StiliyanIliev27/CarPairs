@@ -31,4 +31,10 @@ public class PartApiService : IPartApiService
         var response = await _client.DeleteAsync($"api/parts/{id}");
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<bool> UpdateAsync(int id, UpdatePartDto dto)
+    {
+        var response = await _client.PutAsJsonAsync($"api/parts/{id}", dto);
+        return response.IsSuccessStatusCode;
+    }
 }

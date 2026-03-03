@@ -12,7 +12,7 @@ namespace CarPairs
 
             builder.Services.AddHttpClient<IPartApiService, PartApiService>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:5001/");
+                client.BaseAddress = new Uri("https://localhost:7029/");
             });
 
             var app = builder.Build();
