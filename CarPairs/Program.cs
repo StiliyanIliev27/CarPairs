@@ -10,9 +10,10 @@ namespace CarPairs
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            // SQL Server and DbContext
-            builder.Services.AddDbContext<Data.ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddHttpClient<IPartApiService, PartApiService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:5001/");
+            });
 
             var app = builder.Build();
 

@@ -1,7 +1,7 @@
-using CarPairs.Models;
+using CarPairs.Core;
 using Microsoft.EntityFrameworkCore;
 
-namespace CarPairs.Data
+namespace CarPairs.Core
 {
     public class ApplicationDbContext : DbContext
     {
