@@ -1,4 +1,5 @@
 ﻿using CarPairs.Core;
+using CarPairs.Core.Interfaces;
 using CarPairs.Core.Services;
 using CarPairs.Core.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,8 @@ namespace CarPairs.API
                     builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddScoped<IPartService, PartService>();
+            builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

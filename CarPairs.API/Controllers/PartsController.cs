@@ -8,7 +8,7 @@ namespace CarPairs.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // Enable after JWT is configured
+    //[Authorize] // Enable after JWT is configured
     public class PartsController : ControllerBase
     {
         private readonly IPartService _service;
@@ -128,7 +128,9 @@ namespace CarPairs.API.Controllers
                 StockQuantity = p.StockQuantity,
                 ManufacturerName = p.Manufacturer?.Name ?? string.Empty,
                 CategoryName = p.Category?.Name ?? string.Empty,
-                CreatedAt = p.CreatedAt.ToString("dd-MM-yyyy HH:mm")
+                CreatedAt = p.CreatedAt.ToString("dd-MM-yyyy HH:mm"),
+                ManufacturerId = p.ManufacturerId,
+                CategoryId = p.CategoryId
             };
         }
     }

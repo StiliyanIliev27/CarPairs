@@ -1,17 +1,16 @@
 ﻿using CarPairs.Core;
-using CarPairs.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using CarPairs.Core.Services.Interfaces;
 
 namespace CarPairs.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ManufacturersController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
-        private readonly IManufacturerService _service;
+        private readonly ICategoryService _service;
 
-        public ManufacturersController(IManufacturerService service)
+        public CategoriesController(ICategoryService service)
         {
             _service = service;
         }
