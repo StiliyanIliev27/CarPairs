@@ -1,0 +1,45 @@
+@model IEnumerable<CarPairs.Models.Part>
+@{
+    ViewData["Title"] = "Parts";
+}
+
+<h1>Parts</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m.Name)</th>
+            <th>@Html.DisplayNameFor(m => m.Price)</th>
+            <th>@Html.DisplayNameFor(m => m.StockQuantity)</th>
+            <th>Manufacturer</th>
+            <th>Category</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(_ => item.Name)</td>
+                <td>@Html.DisplayFor(_ => item.Price)</td>
+                <td>@Html.DisplayFor(_ => item.StockQuantity)</td>
+                <td>@(item.Manufacturer?.Name ?? "-")</td>
+                <td>@(item.Category?.Name ?? "-")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No parts found. <a asp-action="Create">Create the first one</a>.</p>
+}

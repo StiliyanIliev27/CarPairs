@@ -1,5 +1,6 @@
 namespace CarPairs
 {
+    using Microsoft.EntityFrameworkCore;
     public class Program
     {
         public static void Main(string[] args)
@@ -8,6 +9,10 @@ namespace CarPairs
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            // SQL Server and DbContext
+            builder.Services.AddDbContext<Data.ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
@@ -29,6 +34,8 @@ namespace CarPairs
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.MapControllers();
 
             app.Run();
         }
