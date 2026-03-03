@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace CarPairs.Migrations
+namespace CarPairs.Core
 {
     /// <inheritdoc />
     public partial class seededCategoriesAndManufacturers : Migration
