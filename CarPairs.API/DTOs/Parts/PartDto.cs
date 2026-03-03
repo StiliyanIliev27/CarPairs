@@ -18,5 +18,5 @@ namespace CarPairs.API.DTOs.Parts
         public string ManufacturerName { get; set; } = null!;
         public string CategoryName { get; set; } = null!;
         public string CreateAt { get; set; } = null!;
-    } 
+    }
 }
