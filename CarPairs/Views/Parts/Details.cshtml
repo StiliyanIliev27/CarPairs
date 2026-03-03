@@ -1,0 +1,32 @@
+@model CarPairs.Models.Part
+@{
+    ViewData["Title"] = "Part Details";
+}
+
+<h1>Part Details</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Name)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Name)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Price)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Price)</dd>
+
+    <dt class="col-sm-3">Stock Quantity</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.StockQuantity)</dd>
+
+    <dt class="col-sm-3">Manufacturer</dt>
+    <dd class="col-sm-9">@(Model.Manufacturer?.Name ?? "-")</dd>
+
+    <dt class="col-sm-3">Category</dt>
+    <dd class="col-sm-9">@(Model.Category?.Name ?? "-")</dd>
+
+    <dt class="col-sm-3">Created at</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.CreatedAt)</dd>
+</dl>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+</div>

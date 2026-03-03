@@ -1,0 +1,31 @@
+@model CarPairs.Models.Part
+@{
+    ViewData["Title"] = "Delete Part";
+}
+
+<h1>Delete Part</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Name)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Name)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Price)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Price)</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.StockQuantity)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.StockQuantity)</dd>
+
+    <dt class="col-sm-3">Manufacturer</dt>
+    <dd class="col-sm-9">@(Model.Manufacturer?.Name ?? "-")</dd>
+
+    <dt class="col-sm-3">Category</dt>
+    <dd class="col-sm-9">@(Model.Category?.Name ?? "-")</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+</form>
