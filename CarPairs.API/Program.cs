@@ -17,6 +17,7 @@ namespace CarPairs.API
                     builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddScoped<IPartService, PartService>();
+            builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
