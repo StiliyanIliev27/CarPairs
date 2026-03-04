@@ -4,6 +4,7 @@ namespace CarPairs.Core.Services.Interfaces
 {
     public interface IManufacturerService
     {
+        Task<List<SimpleLookupDto>> GetLookupAsync(CancellationToken cancellationToken = default);
         Task<PagedResult<Manufacturer>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
         Task<Manufacturer?> GetByIdAsync(int id, CancellationToken cancellationToken);
         Task<int> CreateAsync(Manufacturer manufacturer, CancellationToken cancellationToken);

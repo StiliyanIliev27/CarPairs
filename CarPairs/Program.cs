@@ -1,6 +1,10 @@
 namespace CarPairs
 {
+    using CarPairs.Web.Services.Interfaces;
+    using CarPairs.Web.Services;
     using Microsoft.EntityFrameworkCore;
+    using CarPairs.Web.Extensions;
+
     public class Program
     {
         public static void Main(string[] args)
@@ -10,15 +14,7 @@ namespace CarPairs
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddHttpClient<IPartApiService, PartApiService>(client =>
-            {
-                client.BaseAddress = new Uri("http://localhost:7029/");
-            });
-
-            builder.Services.AddHttpClient<IManufacturerApiService, ManufacturerApiService>(client =>
-            {
-                client.BaseAddress = new Uri("http://localhost:7029/");
-            });
+            builder.Services.AddApiClients(builder.Configuration);
 
             var app = builder.Build();
 

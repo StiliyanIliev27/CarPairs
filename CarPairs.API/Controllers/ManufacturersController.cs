@@ -1,8 +1,9 @@
-﻿using CarPairs.API.DTOs.Manufacturers;
+using CarPairs.API.DTOs.Manufacturers;
 using CarPairs.Core;
 using CarPairs.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarPairs.API.Controllers
 {
@@ -16,6 +17,13 @@ namespace CarPairs.API.Controllers
         public ManufacturersController(IManufacturerService service)
         {
             _service = service;
+        }
+        
+        [HttpGet("lookup")]
+        public async Task<ActionResult<IEnumerable<SimpleLookupDto>>> GetLookup(CancellationToken cancellationToken)
+        {
+            var result = await _service.GetLookupAsync(cancellationToken);
+            return Ok(result);
         }
 
         /// <summary>

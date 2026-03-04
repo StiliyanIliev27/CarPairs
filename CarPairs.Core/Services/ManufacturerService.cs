@@ -11,6 +11,18 @@ public class ManufacturerService : IManufacturerService
     {
         _context = context;
     }
+    
+    public async Task<List<SimpleLookupDto>> GetLookupAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Manufacturers
+            .OrderBy(m => m.Name)
+            .Select(m => new SimpleLookupDto
+             {
+                Id = m.Id,
+                Name = m.Name!
+            })
+            .ToListAsync(cancellationToken);
+    }
 
     public async Task<PagedResult<Manufacturer>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
