@@ -1,30 +1,26 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CarPairs.Core
+namespace CarPairs.API.DTOs.Manufacturers
 {
-    public class Manufacturer
+    public class ManufacturerReadDto
     {
         public int Id { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(100)]
+        [MaxLength(100)]
         public string Country { get; set; } = string.Empty;
 
-        [Required]
-        [Range(1800, 9999)]
         public int FoundedYear { get; set; }
 
-        [StringLength(200)]
+        [MaxLength(200)]
         public string? Website { get; set; }
 
-        [Required]
         public bool IsActive { get; set; }
 
-        [Required]
-        public DateTime CreatedAt { get; set; }
+        public string CreatedAt { get; set; } = string.Empty;
     }
 }

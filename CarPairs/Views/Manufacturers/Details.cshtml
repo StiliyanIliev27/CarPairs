@@ -1,0 +1,35 @@
+@model CarPairs.API.DTOs.Manufacturers.ManufacturerReadDto
+@{
+    ViewData["Title"] = "Manufacturer Details";
+}
+
+<h1>Manufacturer Details</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <dl class="row">
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">Country</dt>
+            <dd class="col-sm-9">@Model.Country</dd>
+
+            <dt class="col-sm-3">Founded</dt>
+            <dd class="col-sm-9">@Model.FoundedYear</dd>
+
+            <dt class="col-sm-3">Website</dt>
+            <dd class="col-sm-9">@(Model.Website ?? "-")</dd>
+
+            <dt class="col-sm-3">Active</dt>
+            <dd class="col-sm-9">@(Model.IsActive ? "Yes" : "No")</dd>
+
+            <dt class="col-sm-3">Created</dt>
+            <dd class="col-sm-9">@Model.CreatedAt</dd>
+        </dl>
+
+        <p>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+        </p>
+    </div>
+</div>

@@ -1,11 +1,15 @@
-﻿namespace CarPairs.Core.Interfaces;
+using System.Threading;
 
-public interface IManufacturerService
+namespace CarPairs.Core.Services.Interfaces
 {
-    Task<List<SimpleLookupDto>> GetLookupAsync(CancellationToken cancellationToken = default);
-    Task<List<Manufacturer>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<Manufacturer?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-    Task<int> CreateAsync(Manufacturer manufacturer, CancellationToken cancellationToken = default);
-    Task<bool> UpdateAsync(Manufacturer manufacturer, CancellationToken cancellationToken = default);
-    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
+    public interface IManufacturerService
+    {
+        Task<List<SimpleLookupDto>> GetLookupAsync(CancellationToken cancellationToken = default);
+        Task<PagedResult<Manufacturer>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
+        Task<Manufacturer?> GetByIdAsync(int id, CancellationToken cancellationToken);
+        Task<int> CreateAsync(Manufacturer manufacturer, CancellationToken cancellationToken);
+        Task<bool> UpdateAsync(Manufacturer manufacturer, CancellationToken cancellationToken);
+        Task<bool> DeleteAsync(int id, CancellationToken cancellationToken);
+        Task<PagedResult<Manufacturer>> SearchAsync(string? name, string? country, int pageNumber, int pageSize, CancellationToken cancellationToken);
+    }
 }

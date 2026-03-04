@@ -4002,27 +4002,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Stiliyan\\.nuget\\packages\\": {}
+    "/Users/martinmechkov/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\University\\Distributed Applications\\CarPairs\\CarPairs.Core\\CarPairs.Core.csproj",
+      "projectUniqueName": "/Users/martinmechkov/Documents/Uni project/CarPairs/CarPairs.Core/CarPairs.Core.csproj",
       "projectName": "CarPairs.Core",
-      "projectPath": "D:\\University\\Distributed Applications\\CarPairs\\CarPairs.Core\\CarPairs.Core.csproj",
-      "packagesPath": "C:\\Users\\Stiliyan\\.nuget\\packages\\",
-      "outputPath": "D:\\University\\Distributed Applications\\CarPairs\\CarPairs.Core\\obj\\",
+      "projectPath": "/Users/martinmechkov/Documents/Uni project/CarPairs/CarPairs.Core/CarPairs.Core.csproj",
+      "packagesPath": "/Users/martinmechkov/.nuget/packages/",
+      "outputPath": "/Users/martinmechkov/Documents/Uni project/CarPairs/CarPairs.Core/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Stiliyan\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/martinmechkov/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4073,7 +4070,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/Users/martinmechkov/dotnet8/sdk/8.0.418/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

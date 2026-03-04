@@ -1,56 +1,112 @@
-﻿using CarPairs.Core.Interfaces;
+using CarPairs.Core.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CarPairs.Core.Services
+namespace CarPairs.Core.Services;
+
+public class ManufacturerService : IManufacturerService
 {
-    public class ManufacturerService : IManufacturerService
+    private readonly ApplicationDbContext _context;
+
+    public ManufacturerService(ApplicationDbContext context)
     {
-        private readonly ApplicationDbContext _context;
+        _context = context;
+    }
+    
+    public async Task<List<SimpleLookupDto>> GetLookupAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Manufacturers
+            .OrderBy(m => m.Name)
+            .Select(m => new SimpleLookupDto
+             {
+                Id = m.Id,
+                Name = m.Name!
+            })
+            .ToListAsync(cancellationToken);
+    }
 
-        public ManufacturerService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-        public Task<int> CreateAsync(Manufacturer manufacturer, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
+    public async Task<PagedResult<Manufacturer>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    {
+        var query = _context.Manufacturers.AsQueryable();
 
-        public Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
+        var totalCount = await query.CountAsync(cancellationToken);
 
-        public Task<List<Manufacturer>> GetAllAsync(CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
+        var items = await query
+            .AsNoTracking()
+            .OrderBy(m => m.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
 
-        public Task<Manufacturer?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        return new PagedResult<Manufacturer>
         {
-            throw new NotImplementedException();
-        }
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            Data = items
+        };
+    }
 
-        public async Task<List<SimpleLookupDto>> GetLookupAsync(CancellationToken cancellationToken = default)
-        {
-            return await _context.Manufacturers
-                .OrderBy(m => m.Name)
-                .Select(m => new SimpleLookupDto
-                {
-                    Id = m.Id,
-                    Name = m.Name!
-                })
-                .ToListAsync(cancellationToken);
-        }
+    public async Task<Manufacturer?> GetByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        return await _context.Manufacturers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+    }
 
-        public Task<bool> UpdateAsync(Manufacturer manufacturer, CancellationToken cancellationToken = default)
+    public async Task<int> CreateAsync(Manufacturer manufacturer, CancellationToken cancellationToken)
+    {
+        manufacturer.CreatedAt = DateTime.UtcNow;
+        _context.Manufacturers.Add(manufacturer);
+        await _context.SaveChangesAsync(cancellationToken);
+        return manufacturer.Id;
+    }
+
+    public async Task<bool> UpdateAsync(Manufacturer manufacturer, CancellationToken cancellationToken)
+    {
+        if (!await _context.Manufacturers.AnyAsync(m => m.Id == manufacturer.Id, cancellationToken))
+            return false;
+
+        _context.Manufacturers.Update(manufacturer);
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
+    {
+        var manufacturer = await _context.Manufacturers.FindAsync(new object[] { id }, cancellationToken);
+        if (manufacturer == null)
+            return false;
+
+        _context.Manufacturers.Remove(manufacturer);
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<PagedResult<Manufacturer>> SearchAsync(string? name, string? country, int pageNumber, int pageSize, CancellationToken cancellationToken)
+    {
+        var query = _context.Manufacturers.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(name))
+            query = query.Where(m => m.Name.Contains(name));
+
+        if (!string.IsNullOrWhiteSpace(country))
+            query = query.Where(m => m.Country.Contains(country));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .AsNoTracking()
+            .OrderBy(m => m.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<Manufacturer>
         {
-            throw new NotImplementedException();
-        }
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            Data = items
+        };
     }
 }
