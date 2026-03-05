@@ -63,26 +63,6 @@ namespace CarPairs.API
             // - In production use real JWT or other schemes
             // - In Development enable a simple dev auth handler that injects a test user (Admin role)
             // ============================
-            if (builder.Environment.IsDevelopment())
-            {
-                builder.Services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = "DevAuth";
-                    options.DefaultChallengeScheme = "DevAuth";
-                })
-                .AddScheme<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions, CarPairs.API.Authentication.DevelopmentAuthenticationHandler>(
-                    "DevAuth", options => { });
-
-                builder.Services.AddAuthorization(options =>
-                {
-                    options.AddPolicy("RequireAdmin", policy => policy.RequireRole("Admin"));
-                });
-            }
-            else
-            {
-                builder.Services.AddAuthentication();
-                builder.Services.AddAuthorization();
-            }
 
             var app = builder.Build();
 
