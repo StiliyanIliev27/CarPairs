@@ -10,7 +10,6 @@ namespace CarPairs.Web.Services.Interfaces
         Task<bool> CreateAsync(ManufacturerCreateDto dto);
         Task<bool> UpdateAsync(int id, ManufacturerUpdateDto dto);
         Task<bool> DeleteAsync(int id);
-        Task<PagedResult<ManufacturerReadDto>?> SearchAsync(string? name, string? country);
     }
 }
 

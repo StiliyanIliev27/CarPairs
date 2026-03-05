@@ -140,26 +140,6 @@ namespace CarPairs.API.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Search manufacturers by name and country
-        /// </summary>
-        [HttpGet("search")]
-        [AllowAnonymous]
-        public async Task<ActionResult<PagedResult<ManufacturerReadDto>>> Search(string? name = null, string? country = null, int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default)
-        {
-            var result = await _service.SearchAsync(name, country, pageNumber, pageSize, cancellationToken);
-
-            var dto = new PagedResult<ManufacturerReadDto>
-            {
-                TotalCount = result.TotalCount,
-                PageNumber = result.PageNumber,
-                PageSize = result.PageSize,
-                Data = result.Data.Select(MapToReadDto).ToList()
-            };
-
-            return Ok(dto);
-        }
-
         private static ManufacturerReadDto MapToReadDto(Manufacturer m)
         {
             return new ManufacturerReadDto

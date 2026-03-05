@@ -2,7 +2,7 @@ using CarPairs.API.DTOs.Manufacturers;
 using CarPairs.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CarPairs
+namespace CarPairs.Controllers
 {
     public class ManufacturersController : Controller
     {
@@ -98,12 +98,6 @@ namespace CarPairs
         {
             await _service.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        public async Task<IActionResult> Search(string? name, string? country)
-        {
-            var result = await _service.SearchAsync(name, country);
-            return View("Index", result?.Data ?? new List<ManufacturerReadDto>());
         }
     }
 }

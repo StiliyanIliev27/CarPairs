@@ -81,32 +81,4 @@ public class ManufacturerService : IManufacturerService
         await _context.SaveChangesAsync(cancellationToken);
         return true;
     }
-
-    public async Task<PagedResult<Manufacturer>> SearchAsync(string? name, string? country, int pageNumber, int pageSize, CancellationToken cancellationToken)
-    {
-        var query = _context.Manufacturers.AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(name))
-            query = query.Where(m => m.Name.Contains(name));
-
-        if (!string.IsNullOrWhiteSpace(country))
-            query = query.Where(m => m.Country.Contains(country));
-
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var items = await query
-            .AsNoTracking()
-            .OrderBy(m => m.Name)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<Manufacturer>
-        {
-            TotalCount = totalCount,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            Data = items
-        };
-    }
 }

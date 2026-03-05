@@ -40,16 +40,6 @@ namespace CarPairs.Web.Services
             var response = await _client.DeleteAsync($"api/manufacturers/{id}");
             return response.IsSuccessStatusCode;
         }
-
-        public async Task<PagedResult<ManufacturerReadDto>?> SearchAsync(string? name, string? country)
-        {
-            var query = new List<string>();
-            if (!string.IsNullOrWhiteSpace(name)) query.Add($"name={Uri.EscapeDataString(name)}");
-            if (!string.IsNullOrWhiteSpace(country)) query.Add($"country={Uri.EscapeDataString(country)}");
-
-            var url = "api/manufacturers/search" + (query.Count > 0 ? "?" + string.Join("&", query) : string.Empty);
-            return await _client.GetFromJsonAsync<PagedResult<ManufacturerReadDto>>(url);
-        }
     }
 }
 
