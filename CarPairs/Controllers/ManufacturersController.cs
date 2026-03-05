@@ -1,4 +1,5 @@
 using CarPairs.API.DTOs.Manufacturers;
+using CarPairs.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarPairs

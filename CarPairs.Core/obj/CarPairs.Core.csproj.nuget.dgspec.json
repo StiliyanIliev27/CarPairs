@@ -70,7 +70,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/Users/martinmechkov/dotnet8/sdk/8.0.418/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/Users/martinmechkov/.dotnet/sdk/8.0.418/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
