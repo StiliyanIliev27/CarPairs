@@ -1,6 +1,7 @@
 ﻿using CarPairs.Web.Services.Interfaces;
 using CarPairs.Web.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using System;
 
 namespace CarPairs.Web.Extensions;
@@ -21,6 +22,11 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddHttpClient<ILookupApiService, LookupApiService>(client =>
+        {
+            client.BaseAddress = baseUri;
+        });
+
+        services.AddHttpClient<IManufacturerApiService, ManufacturerApiService>(client =>
         {
             client.BaseAddress = baseUri;
         });
