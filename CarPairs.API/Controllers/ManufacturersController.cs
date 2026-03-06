@@ -1,15 +1,14 @@
 using CarPairs.API.DTOs.Manufacturers;
+using CarPairs.API.Extensions;
 using CarPairs.Core;
 using CarPairs.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarPairs.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ManufacturersController : ControllerBase
     {
         private readonly IManufacturerService _service;
@@ -19,24 +18,39 @@ namespace CarPairs.API.Controllers
             _service = service;
         }
         
+        /// <summary>
+        /// Get manufacturers lookup for the user's organization
+        /// </summary>
         [HttpGet("lookup")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<SimpleLookupDto>>> GetLookup(CancellationToken cancellationToken)
         {
-            var result = await _service.GetLookupAsync(cancellationToken);
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid("Organization not found for user");
+
+            var result = await _service.GetLookupAsync(orgId, cancellationToken);
             return Ok(result);
         }
 
         /// <summary>
-        /// Get paged list of manufacturers
+        /// Get paged list of manufacturers for the user's organization
         /// </summary>
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult<PagedResult<ManufacturerReadDto>>> GetManufacturers(
             int pageNumber = 1,
             int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
-            var result = await _service.GetAllAsync(pageNumber, pageSize, cancellationToken);
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid("Organization not found for user");
+
+            if (!User.CanViewOrganization(orgId))
+                return Forbid("You don't have access to this organization");
+
+            var result = await _service.GetAllAsync(orgId, pageNumber, pageSize, cancellationToken);
 
             var dto = new PagedResult<ManufacturerReadDto>
             {
@@ -53,10 +67,14 @@ namespace CarPairs.API.Controllers
         /// Get manufacturer by id
         /// </summary>
         [HttpGet("{id:int}")]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<ActionResult<ManufacturerReadDto>> GetManufacturer(int id, CancellationToken cancellationToken)
         {
-            var manufacturer = await _service.GetByIdAsync(id, cancellationToken);
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid("Organization not found for user");
+
+            var manufacturer = await _service.GetByIdAsync(orgId, id, cancellationToken);
 
             if (manufacturer == null)
                 return NotFound();
@@ -65,12 +83,19 @@ namespace CarPairs.API.Controllers
         }
 
         /// <summary>
-        /// Create a manufacturer
+        /// Create a manufacturer (Manager and Admin only)
         /// </summary>
         [HttpPost]
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize]
         public async Task<ActionResult> CreateManufacturer([FromBody] ManufacturerCreateDto dto, CancellationToken cancellationToken)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null)
+                return Forbid("Organization not found for user");
+
+            if (!User.CanCreateInOrganization(orgId))
+                return Forbid("You don't have permission to create manufacturers in this organization");
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -84,21 +109,29 @@ namespace CarPairs.API.Controllers
                 FoundedYear = dto.FoundedYear,
                 Website = dto.Website,
                 IsActive = dto.IsActive,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow,
+                OrganizationId = orgId.Value
             };
 
-            var newId = await _service.CreateAsync(entity, cancellationToken);
+            var newId = await _service.CreateAsync(orgId.Value, entity, cancellationToken);
 
             return CreatedAtAction(nameof(GetManufacturer), new { id = newId }, new { id = newId });
         }
 
         /// <summary>
-        /// Update a manufacturer
+        /// Update a manufacturer (Manager and Admin only)
         /// </summary>
         [HttpPut("{id:int}")]
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize]
         public async Task<IActionResult> UpdateManufacturer(int id, [FromBody] ManufacturerUpdateDto dto, CancellationToken cancellationToken)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid("Organization not found for user");
+
+            if (!User.CanEditInOrganization(orgId))
+                return Forbid("You don't have permission to edit manufacturers in this organization");
+
             if (id != dto.Id)
                 return BadRequest("Id mismatch.");
 
@@ -116,10 +149,11 @@ namespace CarPairs.API.Controllers
                 FoundedYear = dto.FoundedYear,
                 Website = dto.Website,
                 IsActive = dto.IsActive,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow,
+                OrganizationId = orgId ?? 0
             };
 
-            var updated = await _service.UpdateAsync(entity, cancellationToken);
+            var updated = await _service.UpdateAsync(orgId, entity, cancellationToken);
 
             if (!updated)
                 return NotFound();
@@ -131,10 +165,18 @@ namespace CarPairs.API.Controllers
         /// Delete a manufacturer (Admin only)
         /// </summary>
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> DeleteManufacturer(int id, CancellationToken cancellationToken)
         {
-            var deleted = await _service.DeleteAsync(id, cancellationToken);
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid("Organization not found for user");
+
+            var role = User.GetUserRole();
+            if (role != UserRole.Admin)
+                return Forbid("Only admins can delete manufacturers");
+
+            var deleted = await _service.DeleteAsync(orgId, id, cancellationToken);
 
             if (!deleted)
                 return NotFound();

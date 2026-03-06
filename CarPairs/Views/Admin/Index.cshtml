@@ -1,0 +1,71 @@
+@model CarPairs.Web.Services.Interfaces.AdminStatsDto
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="cp-page-header">
+    <div>
+        <h1 class="fw-bold mb-0"><i class="bi bi-shield-lock me-2 text-warning"></i>Admin Panel</h1>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <a asp-action="Organizations" class="text-decoration-none">
+            <div class="cp-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <i class="bi bi-building fs-4 text-warning"></i>
+                    <span class="badge bg-success-subtle text-success border">@Model.ActiveOrganizations active</span>
+                </div>
+                <div class="fs-2 fw-bold text-dark">@Model.TotalOrganizations</div>
+                <small class="text-muted">Organizations</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <a asp-action="Users" class="text-decoration-none">
+            <div class="cp-card p-4 h-100">
+                <div class="mb-3">
+                    <i class="bi bi-people fs-4 text-warning"></i>
+                </div>
+                <div class="fs-2 fw-bold text-dark">@Model.TotalUsers</div>
+                <small class="text-muted">Registered users</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="cp-card p-4 h-100">
+            <div class="mb-3">
+                <i class="bi bi-tools fs-4 text-warning"></i>
+            </div>
+            <div class="fs-2 fw-bold">@Model.TotalParts</div>
+            <small class="text-muted">Parts across @Model.TotalCategories categories</small>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="cp-card p-4 h-100">
+            <div class="mb-3">
+                <i class="bi bi-gear-wide-connected fs-4 text-warning"></i>
+            </div>
+            <div class="fs-2 fw-bold">@Model.TotalManufacturers</div>
+            <small class="text-muted">Manufacturers</small>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="cp-card p-4 h-100">
+            <h5 class="fw-semibold mb-2">Organizations</h5>
+            <p class="text-muted small mb-3">Create, edit or deactivate organizations and see how many users and parts belong to each.</p>
+            <a asp-action="Organizations" class="btn btn-sm btn-outline-dark">Go to Organizations <i class="bi bi-arrow-right ms-1"></i></a>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="cp-card p-4 h-100">
+            <h5 class="fw-semibold mb-2">Users</h5>
+            <p class="text-muted small mb-3">Change roles, assign users to organizations or deactivate accounts.</p>
+            <a asp-action="Users" class="btn btn-sm btn-outline-dark">Go to Users <i class="bi bi-arrow-right ms-1"></i></a>
+        </div>
+    </div>
+</div>

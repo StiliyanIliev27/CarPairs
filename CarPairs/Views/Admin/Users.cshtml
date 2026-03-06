@@ -1,0 +1,159 @@
+@model IEnumerable<CarPairs.Web.Services.Interfaces.AdminUserDto>
+@using CarPairs.Core
+@{
+    ViewData["Title"] = "Manage Users";
+    var organizations = (List<CarPairs.Web.Services.Interfaces.AdminOrganizationDto>)ViewBag.Organizations;
+}
+
+<div class="cp-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none">Admin</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Users</li>
+            </ol>
+        </nav>
+        <h1 class="fw-bold mb-0"><i class="bi bi-people me-2 text-warning"></i>Users</h1>
+    </div>
+</div>
+
+<div class="cp-card p-3 mb-3">
+    <div class="row g-2 align-items-center">
+        <div class="col-sm">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" id="userSearch" class="form-control border-start-0"
+                       placeholder="Search by email..." aria-label="Search" />
+            </div>
+        </div>
+        <div class="col-sm-auto">
+            <select id="roleFilter" class="form-select">
+                <option value="">All Roles</option>
+                @foreach (var role in Enum.GetValues<UserRole>())
+                {
+                    <option value="@role.ToString().ToLower()">@role</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="button" id="clearSearch" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle me-1"></i>Clear
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-people fs-1 d-block mb-2"></i>
+        <p>No users found.</p>
+    </div>
+}
+else
+{
+    <div class="cp-card overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="usersTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Organization</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr data-email="@user.Email?.ToLower()" data-role="@user.Role.ToLower()">
+                            <td class="fw-semibold">@user.Email</td>
+                            <td>
+                                @{
+                                    var roleBadge = user.Role switch
+                                    {
+                                        "Admin"   => "bg-danger-subtle text-danger",
+                                        "Manager" => "bg-primary-subtle text-primary",
+                                        "User"    => "bg-info-subtle text-info",
+                                        _         => "bg-secondary-subtle text-secondary"
+                                    };
+                                }
+                                <span class="badge @roleBadge border">@user.Role</span>
+                            </td>
+                            <td>
+                                @if (user.OrganizationName != null)
+                                {
+                                    <span class="small">@user.OrganizationName</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">None</span>
+                                }
+                            </td>
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <i class="bi bi-check-circle me-1"></i>Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary border">Inactive</span>
+                                }
+                            </td>
+                            <td><span class="small text-muted">@user.CreatedAt.ToString("MMM dd, yyyy")</span></td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a asp-action="EditUser" asp-route-id="@user.Id"
+                                       class="btn btn-outline-primary" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeleteUser" asp-route-id="@user.Id" method="post"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Delete @user.Email?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const search     = document.getElementById('userSearch');
+            const roleFilter = document.getElementById('roleFilter');
+            const clear      = document.getElementById('clearSearch');
+            const table      = document.getElementById('usersTable');
+            const rows       = table ? table.querySelectorAll('tbody tr') : [];
+
+            function filter() {
+                const q = search.value.toLowerCase().trim();
+                const r = roleFilter.value;
+                rows.forEach(row => {
+                    const emailMatch = (row.dataset.email || '').includes(q);
+                    const roleMatch  = !r || row.dataset.role === r;
+                    row.style.display = (emailMatch && roleMatch) ? '' : 'none';
+                });
+            }
+            search.addEventListener('input', filter);
+            roleFilter.addEventListener('change', filter);
+            clear.addEventListener('click', () => {
+                search.value = '';
+                roleFilter.value = '';
+                filter();
+            });
+        });
+    </script>
+}

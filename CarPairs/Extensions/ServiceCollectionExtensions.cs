@@ -37,6 +37,11 @@ public static class ServiceCollectionExtensions
             client.BaseAddress = baseUri;
         }).AddHttpMessageHandler<JwtTokenHandler>();
 
+        services.AddHttpClient<IAdminApiService, AdminApiService>(client =>
+        {
+            client.BaseAddress = baseUri;
+        }).AddHttpMessageHandler<JwtTokenHandler>();
+
         // Add the JWT token handler
         services.AddTransient<JwtTokenHandler>();
 

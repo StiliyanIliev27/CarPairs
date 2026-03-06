@@ -13,12 +13,14 @@ public class PartService : IPartService
     }
 
     public async Task<PagedResult<Part>> GetAllAsync(
+        int? organizationId,
         int pageNumber,
         int pageSize,
         string? search,
         CancellationToken cancellationToken)
     {
         var query = _context.Parts
+            .Where(p => !organizationId.HasValue || p.OrganizationId == organizationId.Value)
             .Include(p => p.Manufacturer)
             .Include(p => p.Category)
             .AsQueryable();
@@ -45,35 +47,43 @@ public class PartService : IPartService
         };
     }
 
-    public async Task<Part?> GetByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<Part?> GetByIdAsync(int? organizationId, int id, CancellationToken cancellationToken)
     {
         return await _context.Parts
+            .Where(p => !organizationId.HasValue || p.OrganizationId == organizationId.Value)
             .Include(p => p.Manufacturer)
             .Include(p => p.Category)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
-    public async Task<int> CreateAsync(Part part, CancellationToken cancellationToken)
+    public async Task<int> CreateAsync(int? organizationId, Part part, CancellationToken cancellationToken)
     {
         part.CreatedAt = DateTime.UtcNow;
+        if (organizationId.HasValue)
+            part.OrganizationId = organizationId.Value;
         _context.Parts.Add(part);
         await _context.SaveChangesAsync(cancellationToken);
         return part.Id;
     }
 
-    public async Task<bool> UpdateAsync(Part part, CancellationToken cancellationToken)
+    public async Task<bool> UpdateAsync(int? organizationId, Part part, CancellationToken cancellationToken)
     {
-        if (!await _context.Parts.AnyAsync(p => p.Id == part.Id, cancellationToken))
+        var existing = await _context.Parts
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == part.Id && (!organizationId.HasValue || p.OrganizationId == organizationId.Value), cancellationToken);
+        if (existing == null)
             return false;
 
+        part.OrganizationId = existing.OrganizationId;
         _context.Parts.Update(part);
         await _context.SaveChangesAsync(cancellationToken);
         return true;
     }
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
+    public async Task<bool> DeleteAsync(int? organizationId, int id, CancellationToken cancellationToken)
     {
-        var part = await _context.Parts.FindAsync(new object[] { id }, cancellationToken);
+        var part = await _context.Parts
+            .FirstOrDefaultAsync(p => p.Id == id && (!organizationId.HasValue || p.OrganizationId == organizationId.Value), cancellationToken);
         if (part == null)
             return false;
 

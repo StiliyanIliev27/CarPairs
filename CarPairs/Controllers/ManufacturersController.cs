@@ -1,7 +1,8 @@
 using CarPairs.API.DTOs.Manufacturers;
+using CarPairs.Web.Extensions;
 using CarPairs.Web.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CarPairs.Controllers
 {
@@ -17,12 +18,20 @@ namespace CarPairs.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
             var result = await _service.GetAllAsync();
             return View(result?.Data ?? new List<ManufacturerReadDto>());
         }
 
         public async Task<IActionResult> Details(int id)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
             var manufacturer = await _service.GetByIdAsync(id);
             if (manufacturer == null)
                 return NotFound();
@@ -33,6 +42,13 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public IActionResult Create()
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null)
+                return Forbid();
+
+            if (!User.CanManageOrganization(orgId))
+                return Forbid();
+
             return View();
         }
 
@@ -41,6 +57,13 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create(ManufacturerCreateDto dto)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null)
+                return Forbid();
+
+            if (!User.CanManageOrganization(orgId))
+                return Forbid();
+
             if (!ModelState.IsValid)
                 return View(dto);
 
@@ -54,6 +77,13 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
+            if (!User.CanManageOrganization(orgId))
+                return Forbid();
+
             var manufacturer = await _service.GetByIdAsync(id);
             if (manufacturer == null)
                 return NotFound();
@@ -76,6 +106,13 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id, ManufacturerUpdateDto dto)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
+            if (!User.CanManageOrganization(orgId))
+                return Forbid();
+
             if (id != dto.Id)
                 return BadRequest();
 
@@ -92,6 +129,14 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
+            var role = User.GetUserRole();
+            if (role != "Admin")
+                return Forbid();
+
             var manufacturer = await _service.GetByIdAsync(id);
             if (manufacturer == null)
                 return NotFound();
@@ -104,7 +149,19 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteAsync(id);
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
+            var role = User.GetUserRole();
+            if (role != "Admin")
+                return Forbid();
+
+            var success = await _service.DeleteAsync(id);
+
+            if (!success)
+                return NotFound();
+
             return RedirectToAction(nameof(Index));
         }
     }

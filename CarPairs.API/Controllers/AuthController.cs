@@ -1,4 +1,5 @@
 using CarPairs.Core;
+using CarPairs.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -15,12 +16,18 @@ namespace CarPairs.API.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly IOrganizationService _organizationService;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration)
+        public AuthController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IConfiguration configuration,
+            IOrganizationService organizationService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _organizationService = organizationService;
         }
 
         [HttpPost("register")]
@@ -29,14 +36,37 @@ namespace CarPairs.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            // Verify organization exists
+            if (model.OrganizationId.HasValue)
+            {
+                var org = await _organizationService.GetByIdAsync(model.OrganizationId.Value);
+                if (org == null)
+                    return BadRequest("Organization not found");
+            }
+
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                OrganizationId = model.OrganizationId,
+                Role = model.Role ?? UserRole.User
+            };
+
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                // Assign default role (e.g., User)
-                await _userManager.AddToRoleAsync(user, "User");
-                return Ok(new { Message = "User registered successfully" });
+                // Assign role
+                var roleStr = user.Role.ToString();
+                await _userManager.AddToRoleAsync(user, roleStr);
+                
+                return Ok(new
+                {
+                    Message = "User registered successfully",
+                    Email = user.Email,
+                    Role = user.Role.ToString(),
+                    OrganizationId = user.OrganizationId
+                });
             }
 
             return BadRequest(result.Errors);
@@ -56,25 +86,32 @@ namespace CarPairs.API.Controllers
             if (!result.Succeeded)
                 return Unauthorized("Invalid credentials");
 
-            var roles = await _userManager.GetRolesAsync(user);
-            var token = GenerateJwtToken(user, roles);
+            var token = GenerateJwtToken(user);
             
-            return Ok(new { Token = token, Email = user.Email, Roles = roles });
+            return Ok(new
+            {
+                Token = token,
+                Email = user.Email,
+                Role = user.Role.ToString(),
+                OrganizationId = user.OrganizationId
+            });
         }
 
-        private string GenerateJwtToken(ApplicationUser user, IList<string> roles)
+        private string GenerateJwtToken(ApplicationUser user)
         {
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim("UserRole", user.Role.ToString())
             };
 
-            // Add role claims
-            foreach (var role in roles)
+            // Add organization ID claim if user belongs to an organization
+            if (user.OrganizationId.HasValue)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim("OrganizationId", user.OrganizationId.Value.ToString()));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -84,7 +121,7 @@ namespace CarPairs.API.Controllers
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryInMinutes"])),
+                expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:ExpiryInMinutes"])),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -95,6 +132,8 @@ namespace CarPairs.API.Controllers
     {
         public string Email { get; set; }
         public string Password { get; set; }
+        public int? OrganizationId { get; set; }
+        public UserRole? Role { get; set; }
     }
 
     public class LoginModel
