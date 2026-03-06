@@ -4,6 +4,7 @@ namespace CarPairs
     using CarPairs.Web.Services;
     using Microsoft.EntityFrameworkCore;
     using CarPairs.Web.Extensions;
+    using Microsoft.AspNetCore.Authentication.Cookies;
 
     public class Program
     {
@@ -13,6 +14,25 @@ namespace CarPairs
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            // Add HTTP context accessor for JWT token handler
+            builder.Services.AddHttpContextAccessor();
+
+            // Add session services
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            // Add authentication
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                });
 
             builder.Services.AddApiClients(builder.Configuration);
 
@@ -29,8 +49,11 @@ namespace CarPairs
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseSession();
+
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

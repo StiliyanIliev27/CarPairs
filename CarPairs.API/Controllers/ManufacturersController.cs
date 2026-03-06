@@ -68,6 +68,7 @@ namespace CarPairs.API.Controllers
         /// Create a manufacturer
         /// </summary>
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult> CreateManufacturer([FromBody] ManufacturerCreateDto dto, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -95,6 +96,7 @@ namespace CarPairs.API.Controllers
         /// Update a manufacturer
         /// </summary>
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> UpdateManufacturer(int id, [FromBody] ManufacturerUpdateDto dto, CancellationToken cancellationToken)
         {
             if (id != dto.Id)

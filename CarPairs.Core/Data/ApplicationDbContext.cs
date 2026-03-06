@@ -1,9 +1,11 @@
 using CarPairs.Core;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarPairs.Core
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -17,20 +19,6 @@ namespace CarPairs.Core
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Seed Categories
-            modelBuilder.Entity<Category>().HasData(
-                new Category { Id = 1, Name = "Engine" },
-                new Category { Id = 2, Name = "Suspension" },
-                new Category { Id = 3, Name = "Brakes" }
-            );
-
-            // Seed Manufacturers
-            modelBuilder.Entity<Manufacturer>().HasData(
-                new Manufacturer { Id = 1, Name = "Bosch" },
-                new Manufacturer { Id = 2, Name = "Delphi" },
-                new Manufacturer { Id = 3, Name = "Valeo" }
-            );
         }
     }
 }

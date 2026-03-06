@@ -4,16 +4,19 @@ using CarPairs.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace CarPairs.Core
+namespace CarPairs.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260305232843_SeededMoreData")]
+    partial class SeededMoreData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,32 +120,6 @@ namespace CarPairs.Core
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "",
-                            IsActive = false,
-                            Name = "Engine"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "",
-                            IsActive = false,
-                            Name = "Suspension"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "",
-                            IsActive = false,
-                            Name = "Brakes"
-                        });
                 });
 
             modelBuilder.Entity("CarPairs.Core.Manufacturer", b =>
@@ -179,35 +156,6 @@ namespace CarPairs.Core
                     b.HasKey("Id");
 
                     b.ToTable("Manufacturers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Country = "",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FoundedYear = 0,
-                            IsActive = false,
-                            Name = "Bosch"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Country = "",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FoundedYear = 0,
-                            IsActive = false,
-                            Name = "Delphi"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Country = "",
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FoundedYear = 0,
-                            IsActive = false,
-                            Name = "Valeo"
-                        });
                 });
 
             modelBuilder.Entity("CarPairs.Core.Part", b =>
@@ -272,32 +220,6 @@ namespace CarPairs.Core
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "1",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "2",
-                            Name = "Manager",
-                            NormalizedName = "MANAGER"
-                        },
-                        new
-                        {
-                            Id = "3",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "4",
-                            Name = "Guest",
-                            NormalizedName = "GUEST"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
