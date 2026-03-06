@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarPairs.Core
 {
@@ -21,10 +22,21 @@ namespace CarPairs.Core
         [StringLength(200)]
         public string? Website { get; set; }
 
+        /// <summary>
+        /// Foreign key to Organization for multi-tenancy
+        /// </summary>
+        [Required]
+        [ForeignKey("Organization")]
+        public int OrganizationId { get; set; }
+
         [Required]
         public bool IsActive { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }
+
+        // Navigation properties
+        public Organization? Organization { get; set; }
+        public ICollection<Part> Parts { get; set; } = new List<Part>();
     }
 }

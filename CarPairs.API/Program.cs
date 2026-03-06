@@ -19,7 +19,7 @@ namespace CarPairs.API
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("DefaultConnection"),
-                    b => b.MigrationsAssembly("CarPairs.API")));
+                    b => b.MigrationsAssembly("CarPairs.Core")));
 
             builder.Services.AddScoped<IPartService, PartService>();
             builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
@@ -100,9 +100,11 @@ namespace CarPairs.API
                 var services = scope.ServiceProvider;
                 try
                 {
+                    await DataSeeder.SeedOrganizations(services);
                     await DataSeeder.SeedRolesAndUsers(services);
                     await DataSeeder.SeedCategories(services);
                     await DataSeeder.SeedManufacturers(services);
+                    await DataSeeder.SeedParts(services);
                 }
                 catch (Exception ex)
                 {
