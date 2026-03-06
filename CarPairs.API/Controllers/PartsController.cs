@@ -8,7 +8,7 @@ namespace CarPairs.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize] // Enable after JWT is configured
+    [Authorize]
     public class PartsController : ControllerBase
     {
         private readonly IPartService _service;
@@ -19,7 +19,7 @@ namespace CarPairs.API.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous] // optional until JWT ready
+        [AllowAnonymous] // Public read access
         public async Task<ActionResult<PagedResult<PartDto>>> GetParts(
             int pageNumber = 1,
             int pageSize = 10,
@@ -52,6 +52,7 @@ namespace CarPairs.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult> CreatePart(
             [FromBody] CreatePartDto dto,
             CancellationToken cancellationToken)
@@ -75,6 +76,7 @@ namespace CarPairs.API.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> UpdatePart(
             int id,
             [FromBody] UpdatePartDto dto,
@@ -106,6 +108,7 @@ namespace CarPairs.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePart(
             int id,
             CancellationToken cancellationToken)

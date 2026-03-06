@@ -3,9 +3,11 @@ using CarPairs.Web.Services.Interfaces;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
-namespace CarPairs.API
+namespace CarPairs.Controllers
 {
+    [Authorize]
     public class PartsController : Controller
     {
         private readonly IPartApiService _service;
@@ -33,6 +35,7 @@ namespace CarPairs.API
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create()
         {
             await FillManufacturersAndCategories();
@@ -40,6 +43,7 @@ namespace CarPairs.API
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create(CreatePartDto dto)
         {
             if (!ModelState.IsValid)
@@ -60,6 +64,7 @@ namespace CarPairs.API
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id)
         {
             var part = await _service.GetByIdAsync(id);
@@ -84,6 +89,7 @@ namespace CarPairs.API
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id, UpdatePartDto dto)
         {
             if (id != dto.Id)
@@ -107,6 +113,7 @@ namespace CarPairs.API
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var part = await _service.GetByIdAsync(id);
@@ -119,6 +126,7 @@ namespace CarPairs.API
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var success = await _service.DeleteAsync(id);

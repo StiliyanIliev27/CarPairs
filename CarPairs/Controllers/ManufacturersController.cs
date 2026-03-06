@@ -1,9 +1,11 @@
 using CarPairs.API.DTOs.Manufacturers;
 using CarPairs.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CarPairs.Controllers
 {
+    [Authorize]
     public class ManufacturersController : Controller
     {
         private readonly IManufacturerApiService _service;
@@ -28,6 +30,7 @@ namespace CarPairs.Controllers
             return View(manufacturer);
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult Create()
         {
             return View();
@@ -35,6 +38,7 @@ namespace CarPairs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create(ManufacturerCreateDto dto)
         {
             if (!ModelState.IsValid)
@@ -47,6 +51,7 @@ namespace CarPairs.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id)
         {
             var manufacturer = await _service.GetByIdAsync(id);
@@ -68,6 +73,7 @@ namespace CarPairs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id, ManufacturerUpdateDto dto)
         {
             if (id != dto.Id)
@@ -83,6 +89,7 @@ namespace CarPairs.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var manufacturer = await _service.GetByIdAsync(id);
@@ -94,6 +101,7 @@ namespace CarPairs.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _service.DeleteAsync(id);
