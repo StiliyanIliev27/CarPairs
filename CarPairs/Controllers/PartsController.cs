@@ -1,9 +1,10 @@
 using CarPairs.API.DTOs.Parts;
+using CarPairs.Web.Extensions;
 using CarPairs.Web.Services.Interfaces;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Authorization;
 
 namespace CarPairs.Controllers
 {
@@ -21,12 +22,20 @@ namespace CarPairs.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
             var result = await _service.GetAllAsync();
             return View(result?.Data ?? new List<PartDto>());
         }
 
         public async Task<IActionResult> Details(int id)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
             var part = await _service.GetByIdAsync(id);
             if (part == null)
                 return NotFound();
@@ -38,6 +47,13 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create()
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null)
+                return Forbid();
+
+            if (!User.CanManageOrganization(orgId))
+                return Forbid();
+
             await FillManufacturersAndCategories();
             return View();
         }
@@ -46,6 +62,13 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create(CreatePartDto dto)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null)
+                return Forbid();
+
+            if (!User.CanManageOrganization(orgId))
+                return Forbid();
+
             if (!ModelState.IsValid)
             {
                 await FillManufacturersAndCategories(dto.ManufacturerId, dto.CategoryId);
@@ -67,6 +90,13 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
+            if (!User.CanManageOrganization(orgId))
+                return Forbid();
+
             var part = await _service.GetByIdAsync(id);
 
             if (part == null)
@@ -92,6 +122,13 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int id, UpdatePartDto dto)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
+            if (!User.CanManageOrganization(orgId))
+                return Forbid();
+
             if (id != dto.Id)
                 return BadRequest();
 
@@ -116,6 +153,14 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
+            var role = User.GetUserRole();
+            if (role != "Admin")
+                return Forbid();
+
             var part = await _service.GetByIdAsync(id);
 
             if (part == null)
@@ -129,6 +174,14 @@ namespace CarPairs.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var orgId = User.GetOrganizationId();
+            if (orgId == null && !User.IsSystemAdmin())
+                return Forbid();
+
+            var role = User.GetUserRole();
+            if (role != "Admin")
+                return Forbid();
+
             var success = await _service.DeleteAsync(id);
 
             if (!success)

@@ -53,13 +53,16 @@ namespace CarPairs.Controllers
                         new Claim("Token", authResponse.Token)
                     };
 
-                    // Add role claims if available
-                    if (authResponse.Roles != null)
+                    // Add role claims - use single Role string from API
+                    if (!string.IsNullOrEmpty(authResponse.Role))
                     {
-                        foreach (var role in authResponse.Roles)
-                        {
-                            claims.Add(new Claim(ClaimTypes.Role, role));
-                        }
+                        claims.Add(new Claim(ClaimTypes.Role, authResponse.Role));
+                    }
+
+                    // Add organization ID claim if user belongs to an organization
+                    if (authResponse.OrganizationId.HasValue)
+                    {
+                        claims.Add(new Claim("OrganizationId", authResponse.OrganizationId.Value.ToString()));
                     }
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -110,7 +113,8 @@ namespace CarPairs.Controllers
                 var registerRequest = new RegisterRequest
                 {
                     Email = model.Email,
-                    Password = model.Password
+                    Password = model.Password,
+                    OrganizationId = model.OrganizationId
                 };
 
                 var success = await _accountService.RegisterAsync(registerRequest);
@@ -158,5 +162,6 @@ namespace CarPairs.Controllers
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string ConfirmPassword { get; set; } = string.Empty;
+        public int? OrganizationId { get; set; }
     }
 }

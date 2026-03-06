@@ -1,0 +1,68 @@
+@model CarPairs.Web.Services.Interfaces.OrganizationFormDto
+@{
+    ViewData["Title"] = "Create Organization";
+}
+
+<div class="cp-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none">Admin</a></li>
+                <li class="breadcrumb-item"><a asp-action="Organizations" class="text-decoration-none">Organizations</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Create</li>
+            </ol>
+        </nav>
+        <h1 class="fw-bold mb-0"><i class="bi bi-plus-circle me-2 text-warning"></i>New Organization</h1>
+    </div>
+</div>
+
+<div class="cp-form-card">
+    <div class="cp-card p-4">
+        <form asp-action="CreateOrganization" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Name" class="form-label fw-semibold"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ContactEmail" class="form-label fw-semibold"></label>
+                    <input asp-for="ContactEmail" class="form-control" />
+                    <span asp-validation-for="ContactEmail" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mt-4">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label fw-semibold">Active</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label fw-semibold"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <hr class="my-4" />
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-dark px-4">
+                    <i class="bi bi-check-lg me-1"></i>Create
+                </button>
+                <a asp-action="Organizations" class="btn btn-outline-secondary">
+                    <i class="bi bi-x me-1"></i>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

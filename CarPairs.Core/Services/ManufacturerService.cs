@@ -12,9 +12,10 @@ public class ManufacturerService : IManufacturerService
         _context = context;
     }
     
-    public async Task<List<SimpleLookupDto>> GetLookupAsync(CancellationToken cancellationToken = default)
+    public async Task<List<SimpleLookupDto>> GetLookupAsync(int? organizationId, CancellationToken cancellationToken = default)
     {
         return await _context.Manufacturers
+            .Where(m => !organizationId.HasValue || m.OrganizationId == organizationId.Value)
             .OrderBy(m => m.Name)
             .Select(m => new SimpleLookupDto
              {
@@ -24,9 +25,11 @@ public class ManufacturerService : IManufacturerService
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<PagedResult<Manufacturer>> GetAllAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    public async Task<PagedResult<Manufacturer>> GetAllAsync(int? organizationId, int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
-        var query = _context.Manufacturers.AsQueryable();
+        var query = _context.Manufacturers
+            .Where(m => !organizationId.HasValue || m.OrganizationId == organizationId.Value)
+            .AsQueryable();
 
         var totalCount = await query.CountAsync(cancellationToken);
 
@@ -46,34 +49,42 @@ public class ManufacturerService : IManufacturerService
         };
     }
 
-    public async Task<Manufacturer?> GetByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<Manufacturer?> GetByIdAsync(int? organizationId, int id, CancellationToken cancellationToken)
     {
         return await _context.Manufacturers
+            .Where(m => !organizationId.HasValue || m.OrganizationId == organizationId.Value)
             .AsNoTracking()
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
     }
 
-    public async Task<int> CreateAsync(Manufacturer manufacturer, CancellationToken cancellationToken)
+    public async Task<int> CreateAsync(int? organizationId, Manufacturer manufacturer, CancellationToken cancellationToken)
     {
         manufacturer.CreatedAt = DateTime.UtcNow;
+        if (organizationId.HasValue)
+            manufacturer.OrganizationId = organizationId.Value;
         _context.Manufacturers.Add(manufacturer);
         await _context.SaveChangesAsync(cancellationToken);
         return manufacturer.Id;
     }
 
-    public async Task<bool> UpdateAsync(Manufacturer manufacturer, CancellationToken cancellationToken)
+    public async Task<bool> UpdateAsync(int? organizationId, Manufacturer manufacturer, CancellationToken cancellationToken)
     {
-        if (!await _context.Manufacturers.AnyAsync(m => m.Id == manufacturer.Id, cancellationToken))
+        var existing = await _context.Manufacturers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.Id == manufacturer.Id && (!organizationId.HasValue || m.OrganizationId == organizationId.Value), cancellationToken);
+        if (existing == null)
             return false;
 
+        manufacturer.OrganizationId = existing.OrganizationId;
         _context.Manufacturers.Update(manufacturer);
         await _context.SaveChangesAsync(cancellationToken);
         return true;
     }
 
-    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
+    public async Task<bool> DeleteAsync(int? organizationId, int id, CancellationToken cancellationToken)
     {
-        var manufacturer = await _context.Manufacturers.FindAsync(new object[] { id }, cancellationToken);
+        var manufacturer = await _context.Manufacturers
+            .FirstOrDefaultAsync(m => m.Id == id && (!organizationId.HasValue || m.OrganizationId == organizationId.Value), cancellationToken);
         if (manufacturer == null)
             return false;
 

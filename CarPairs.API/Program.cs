@@ -24,6 +24,7 @@ namespace CarPairs.API
             builder.Services.AddScoped<IPartService, PartService>();
             builder.Services.AddScoped<IManufacturerService, ManufacturerService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()

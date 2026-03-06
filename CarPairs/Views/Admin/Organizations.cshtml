@@ -1,0 +1,128 @@
+@model IEnumerable<CarPairs.Web.Services.Interfaces.AdminOrganizationDto>
+@{
+    ViewData["Title"] = "Manage Organizations";
+}
+
+<div class="cp-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none">Admin</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Organizations</li>
+            </ol>
+        </nav>
+        <h1 class="fw-bold mb-0"><i class="bi bi-building me-2 text-warning"></i>Organizations</h1>
+    </div>
+    <a asp-action="CreateOrganization" class="btn btn-dark">
+        <i class="bi bi-plus-lg me-1"></i>Add Organization
+    </a>
+</div>
+
+<div class="cp-card p-3 mb-3">
+    <div class="row g-2 align-items-center">
+        <div class="col-sm">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" id="orgSearch" class="form-control border-start-0"
+                       placeholder="Search organizations..." aria-label="Search" />
+            </div>
+        </div>
+        <div class="col-auto">
+            <button type="button" id="clearSearch" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle me-1"></i>Clear
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-building fs-1 d-block mb-2"></i>
+        <p>No organizations found. <a asp-action="CreateOrganization" class="fw-semibold">Create the first one</a>.</p>
+    </div>
+}
+else
+{
+    <div class="cp-card overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="orgsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Users</th>
+                        <th>Parts</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var org in Model)
+                    {
+                        <tr data-name="@org.Name.ToLower()">
+                            <td>
+                                <span class="fw-semibold">@org.Name</span>
+                                @if (!string.IsNullOrEmpty(org.Description))
+                                {
+                                    <br /><span class="text-muted small">@org.Description</span>
+                                }
+                            </td>
+                            <td class="small">@org.ContactEmail</td>
+                            <td>@org.UserCount</td>
+                            <td>@org.PartCount</td>
+                            <td>
+                                @if (org.IsActive)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        <i class="bi bi-check-circle me-1"></i>Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary border">Inactive</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a asp-action="EditOrganization" asp-route-id="@org.Id"
+                                       class="btn btn-outline-primary" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="DeleteOrganization" asp-route-id="@org.Id" method="post"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Delete @org.Name?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const search = document.getElementById('orgSearch');
+            const clear  = document.getElementById('clearSearch');
+            const table  = document.getElementById('orgsTable');
+            const rows   = table ? table.querySelectorAll('tbody tr') : [];
+
+            function filter() {
+                const q = search.value.toLowerCase().trim();
+                rows.forEach(r => {
+                    r.style.display = (r.dataset.name || '').includes(q) ? '' : 'none';
+                });
+            }
+            search.addEventListener('input', filter);
+            clear.addEventListener('click', () => { search.value = ''; filter(); });
+        });
+    </script>
+}
