@@ -1,22 +1,99 @@
-html {
-  font-size: 14px;
+/* ─── Design tokens ─────────────────────────────────────── */
+:root {
+  --cp-brand:       #212529;
+  --cp-accent:      #ffc107;
+  --cp-surface:     #f8f9fa;
+  --cp-border:      #dee2e6;
+  --cp-radius:      0.5rem;
+  --cp-shadow:      0 2px 12px rgba(0,0,0,.08);
+  --cp-shadow-hover:0 4px 20px rgba(0,0,0,.14);
+  --cp-transition:  0.18s ease;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* ─── Base ───────────────────────────────────────────────── */
+html { font-size: 14px; }
+@media (min-width: 768px) { html { font-size: 16px; } }
+
+body { background-color: var(--cp-surface); }
+
+/* ─── Focus rings ────────────────────────────────────────── */
+.btn:focus,
+.btn:active:focus,
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.15rem rgba(255,193,7,.45);
+  outline: none;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* ─── Card helpers ───────────────────────────────────────── */
+.cp-card {
+  background: #fff;
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  box-shadow: var(--cp-shadow);
+  transition: box-shadow var(--cp-transition);
+}
+.cp-card:hover { box-shadow: var(--cp-shadow-hover); }
+
+/* ─── Page headings ──────────────────────────────────────── */
+.cp-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* ─── Table refinements ──────────────────────────────────── */
+.table thead th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #6c757d;
+  border-bottom-width: 2px;
+}
+.table tbody tr { transition: background-color var(--cp-transition); }
+.table-hover tbody tr:hover { background-color: #fff9e6; }
+
+/* ─── Form card ──────────────────────────────────────────── */
+.cp-form-card {
+  max-width: 780px;
+  margin: 0 auto;
 }
 
-body {
-  margin-bottom: 60px;
+/* ─── Auth card ──────────────────────────────────────────── */
+.cp-auth-wrapper {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+.cp-auth-card {
+  width: 100%;
+  max-width: 440px;
+}
+
+/* ─── Buttons ────────────────────────────────────────────── */
+.btn { transition: all var(--cp-transition); }
+
+/* ─── Navbar active link ─────────────────────────────────── */
+.navbar-dark .nav-link.active,
+.navbar-dark .nav-link:hover { color: var(--cp-accent) !important; }
+
+/* ─── Hero section ───────────────────────────────────────── */
+.cp-hero {
+  background: linear-gradient(135deg, #212529 0%, #343a40 100%);
+  border-radius: var(--cp-radius);
+  color: #fff;
+}
+.cp-hero-icon {
+  font-size: 3rem;
+  color: var(--cp-accent);
+}
+
+/* ─── Status badges ──────────────────────────────────────── */
+.badge-active   { font-size: 0.72rem; }
+.cp-stock-low   { color: #dc3545; font-weight: 600; }
+.cp-stock-ok    { color: #198754; font-weight: 600; }
