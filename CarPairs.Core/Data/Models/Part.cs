@@ -19,15 +19,26 @@ namespace CarPairs.Core
         public int StockQuantity { get; set; }
 
         [Required]
+        [ForeignKey("Manufacturer")]
         public int ManufacturerId { get; set; }
 
         [Required]
+        [ForeignKey("Category")]
         public int CategoryId { get; set; }
+
+        /// <summary>
+        /// Foreign key to Organization for multi-tenancy
+        /// </summary>
+        [Required]
+        [ForeignKey("Organization")]
+        public int OrganizationId { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }
 
+        // Navigation properties
         public Manufacturer? Manufacturer { get; set; }
         public Category? Category { get; set; }
+        public Organization? Organization { get; set; }
     }
 }

@@ -1,0 +1,68 @@
+@model CarPairs.API.DTOs.Manufacturers.ManufacturerUpdateDto
+@{
+    ViewData["Title"] = "Edit Manufacturer";
+}
+
+<div class="cp-page-header">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none">Manufacturers</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            </ol>
+        </nav>
+        <h1 class="fw-bold mb-0"><i class="bi bi-pencil-square me-2 text-warning"></i>Edit Manufacturer</h1>
+    </div>
+</div>
+
+<div class="cp-form-card">
+    <div class="cp-card p-4">
+        <form asp-action="Edit" method="post" novalidate>
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Name" class="form-label fw-semibold"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Country" class="form-label fw-semibold"></label>
+                    <input asp-for="Country" class="form-control" />
+                    <span asp-validation-for="Country" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="FoundedYear" class="form-label fw-semibold"></label>
+                    <input asp-for="FoundedYear" type="number" class="form-control" />
+                    <span asp-validation-for="FoundedYear" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Website" class="form-label fw-semibold"></label>
+                    <input asp-for="Website" class="form-control" />
+                    <span asp-validation-for="Website" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <div class="form-check form-switch">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label fw-semibold">Active</label>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4" />
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-dark px-4">
+                    <i class="bi bi-check-lg me-1"></i>Save changes
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-x me-1"></i>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

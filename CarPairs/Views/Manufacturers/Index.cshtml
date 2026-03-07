@@ -1,0 +1,159 @@
+@model IEnumerable<CarPairs.API.DTOs.Manufacturers.ManufacturerReadDto>
+@{
+    ViewData["Title"] = "Manufacturers";
+}
+
+<div class="cp-page-header">
+    <div>
+        <h1 class="fw-bold mb-0"><i class="bi bi-building me-2 text-warning"></i>Manufacturers</h1>
+        <p class="text-muted small mb-0">Browse and manage car part manufacturers</p>
+    </div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+    {
+        <a asp-action="Create" class="btn btn-dark">
+            <i class="bi bi-plus-lg me-1"></i>Add Manufacturer
+        </a>
+    }
+</div>
+
+<div class="cp-card p-3 mb-3">
+    <div class="row g-2 align-items-center">
+        <div class="col-sm">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" id="nameSearch" class="form-control border-start-0"
+                       placeholder="Search by name" aria-label="Search by name" />
+            </div>
+        </div>
+        <div class="col-sm">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-globe text-muted"></i></span>
+                <input type="text" id="countrySearch" class="form-control border-start-0"
+                       placeholder="Search by country" aria-label="Search by country" />
+            </div>
+        </div>
+        <div class="col-auto">
+            <button type="button" id="clearSearch" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle me-1"></i>Clear
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-building fs-1 d-block mb-2"></i>
+        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+        {
+            <p>No manufacturers found. <a asp-action="Create" class="fw-semibold">Add the first one</a>.</p>
+        }
+        else
+        {
+            <p>No manufacturers found.</p>
+        }
+    </div>
+}
+else
+{
+    <div class="cp-card overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="manufacturersTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Country</th>
+                        <th>Founded Year</th>
+                        <th>Website</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr data-name="@item.Name.ToLower()" data-country="@item.Country?.ToLower()">
+                            <td class="fw-semibold">@Html.DisplayFor(_ => item.Name)</td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    <i class="bi bi-geo-alt me-1"></i>@Html.DisplayFor(_ => item.Country)
+                                </span>
+                            </td>
+                            <td>@Html.DisplayFor(_ => item.FoundedYear)</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Website))
+                                {
+                                    <a href="@item.Website" target="_blank" rel="noopener" class="text-decoration-none small">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i>Visit
+                                    </a>
+                                }
+                                else { <span class="text-muted">—</span> }
+                            </td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle badge-active">
+                                        <i class="bi bi-check-circle me-1"></i>Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary border badge-active">Inactive</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Manufacturer actions">
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-outline-secondary" title="Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.Id"
+                                           class="btn btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id"
+                                           class="btn btn-outline-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const nameSearch    = document.getElementById('nameSearch');
+            const countrySearch = document.getElementById('countrySearch');
+            const clearSearch   = document.getElementById('clearSearch');
+            const table         = document.getElementById('manufacturersTable');
+            const rows          = table ? table.querySelectorAll('tbody tr') : [];
+
+            function filterTable() {
+                const nf = nameSearch.value.toLowerCase().trim();
+                const cf = countrySearch.value.toLowerCase().trim();
+                rows.forEach(row => {
+                    const match = (row.dataset.name || '').includes(nf) &&
+                                  (row.dataset.country || '').includes(cf);
+                    row.style.display = match ? '' : 'none';
+                });
+            }
+
+            nameSearch.addEventListener('input', filterTable);
+            countrySearch.addEventListener('input', filterTable);
+            clearSearch.addEventListener('click', () => {
+                nameSearch.value = '';
+                countrySearch.value = '';
+                filterTable();
+            });
+        });
+    </script>
+}

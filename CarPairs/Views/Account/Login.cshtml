@@ -1,0 +1,53 @@
+@model CarPairs.Controllers.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="cp-auth-wrapper">
+    <div class="cp-auth-card">
+        <div class="cp-card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <i class="bi bi-gear-wide-connected fs-1 text-warning"></i>
+                <h2 class="fw-bold mt-2 mb-0">Welcome back</h2>
+                <p class="text-muted small">Sign in to your CarPairs account</p>
+            </div>
+
+            <form asp-action="Login" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true"
+                           placeholder="name@example.com" id="Email" />
+                    <label for="Email"><i class="bi bi-envelope me-1"></i>Email address</label>
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true"
+                           placeholder="Password" id="Password" />
+                    <label for="Password"><i class="bi bi-lock me-1"></i>Password</label>
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input class="form-check-input" asp-for="RememberMe" id="RememberMe" />
+                    <label class="form-check-label" for="RememberMe">@Html.DisplayNameFor(m => m.RememberMe)</label>
+                </div>
+
+                <button id="login-submit" type="submit" class="w-100 btn btn-dark btn-lg fw-semibold">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Log in
+                </button>
+            </form>
+
+            <hr class="my-4" />
+            <p class="text-center text-muted small mb-0">
+                Don't have an account?
+                <a asp-action="Register" class="fw-semibold text-dark">Register here</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
