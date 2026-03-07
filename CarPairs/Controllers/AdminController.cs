@@ -15,14 +15,12 @@ namespace CarPairs.Controllers
             _adminService = adminService;
         }
 
-        // ──── Dashboard ──────────────────────────────────
         public async Task<IActionResult> Index()
         {
             var stats = await _adminService.GetStatsAsync();
             return View(stats ?? new AdminStatsDto());
         }
 
-        // ──── Organizations ──────────────────────────────
         public async Task<IActionResult> Organizations()
         {
             var orgs = await _adminService.GetOrganizationsAsync();
@@ -97,7 +95,6 @@ namespace CarPairs.Controllers
             return RedirectToAction(nameof(Organizations));
         }
 
-        // ──── Users ──────────────────────────────────────
         public async Task<IActionResult> Users()
         {
             var users = await _adminService.GetUsersAsync();

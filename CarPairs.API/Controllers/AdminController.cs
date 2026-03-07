@@ -33,7 +33,6 @@ namespace CarPairs.API.Controllers
             return role == UserRole.Admin;
         }
 
-        // ──── Dashboard Stats ────────────────────────────────
         [HttpGet("stats")]
         public async Task<ActionResult> GetStats(CancellationToken ct)
         {
@@ -52,7 +51,6 @@ namespace CarPairs.API.Controllers
             return Ok(stats);
         }
 
-        // ──── Organization Management ────────────────────────
         [HttpGet("organizations")]
         public async Task<ActionResult> GetAllOrganizations(CancellationToken ct)
         {
@@ -153,7 +151,6 @@ namespace CarPairs.API.Controllers
             return NoContent();
         }
 
-        // ──── User Management ────────────────────────────────
         [HttpGet("users")]
         public async Task<ActionResult> GetAllUsers(CancellationToken ct)
         {
@@ -213,7 +210,6 @@ namespace CarPairs.API.Controllers
         }
     }
 
-    // ──── DTOs ───────────────────────────────────────────────
     public class OrganizationDto
     {
         public string Name { get; set; } = string.Empty;

@@ -36,7 +36,6 @@ namespace CarPairs.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Verify organization exists
             if (model.OrganizationId.HasValue)
             {
                 var org = await _organizationService.GetByIdAsync(model.OrganizationId.Value);

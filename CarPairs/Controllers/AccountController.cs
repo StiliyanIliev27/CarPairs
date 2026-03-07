@@ -42,10 +42,8 @@ namespace CarPairs.Controllers
 
                 if (authResponse != null && !string.IsNullOrEmpty(authResponse.Token))
                 {
-                    // Store JWT token in session for API calls
                     HttpContext.Session.SetString("JwtToken", authResponse.Token);
 
-                    // Create claims for MVC authentication
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, authResponse.Email ?? model.Email),
@@ -53,13 +51,11 @@ namespace CarPairs.Controllers
                         new Claim("Token", authResponse.Token)
                     };
 
-                    // Add role claims - use single Role string from API
                     if (!string.IsNullOrEmpty(authResponse.Role))
                     {
                         claims.Add(new Claim(ClaimTypes.Role, authResponse.Role));
                     }
 
-                    // Add organization ID claim if user belongs to an organization
                     if (authResponse.OrganizationId.HasValue)
                     {
                         claims.Add(new Claim("OrganizationId", authResponse.OrganizationId.Value.ToString()));

@@ -17,9 +17,6 @@ namespace CarPairs.API.Controllers
             _service = service;
         }
 
-        /// <summary>
-        /// Get categories lookup for the user's organization
-        /// </summary>
         [HttpGet("lookup")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<SimpleLookupDto>>> GetLookup(CancellationToken cancellationToken)
@@ -32,9 +29,7 @@ namespace CarPairs.API.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Get paged list of categories for the user's organization
-        /// </summary>
+
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<PagedResult<Category>>> GetCategories(
@@ -53,9 +48,7 @@ namespace CarPairs.API.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Get category by id
-        /// </summary>
+ 
         [HttpGet("{id:int}")]
         [Authorize]
         public async Task<ActionResult<Category>> GetCategory(int id, CancellationToken cancellationToken)
@@ -72,9 +65,6 @@ namespace CarPairs.API.Controllers
             return Ok(category);
         }
 
-        /// <summary>
-        /// Create a category (Manager and Admin only)
-        /// </summary>
         [HttpPost]
         [Authorize]
         public async Task<ActionResult> CreateCategory([FromBody] Category dto, CancellationToken cancellationToken)
@@ -104,9 +94,6 @@ namespace CarPairs.API.Controllers
             return CreatedAtAction(nameof(GetCategory), new { id = newId }, new { id = newId });
         }
 
-        /// <summary>
-        /// Update a category (Manager and Admin only)
-        /// </summary>
         [HttpPut("{id:int}")]
         [Authorize]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] Category dto, CancellationToken cancellationToken)
@@ -143,9 +130,7 @@ namespace CarPairs.API.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Delete a category (Admin only)
-        /// </summary>
+
         [HttpDelete("{id:int}")]
         [Authorize]
         public async Task<IActionResult> DeleteCategory(int id, CancellationToken cancellationToken)

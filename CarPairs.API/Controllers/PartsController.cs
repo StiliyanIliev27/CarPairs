@@ -20,9 +20,6 @@ namespace CarPairs.API.Controllers
             _organizationService = organizationService;
         }
 
-        /// <summary>
-        /// Get parts for the authenticated user's organization
-        /// </summary>
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<PagedResult<PartDto>>> GetParts(
@@ -51,9 +48,6 @@ namespace CarPairs.API.Controllers
             return Ok(dto);
         }
 
-        /// <summary>
-        /// Get a specific part by ID
-        /// </summary>
         [HttpGet("{id:int}")]
         [Authorize]
         public async Task<ActionResult<PartDto>> GetPart(int id, CancellationToken cancellationToken)
@@ -70,9 +64,6 @@ namespace CarPairs.API.Controllers
             return Ok(MapToDto(part));
         }
 
-        /// <summary>
-        /// Create a new part (Manager and Admin only)
-        /// </summary>
         [HttpPost]
         [Authorize]
         public async Task<ActionResult> CreatePart(
@@ -105,9 +96,6 @@ namespace CarPairs.API.Controllers
             return CreatedAtAction(nameof(GetPart), new { id = newId }, new { id = newId });
         }
 
-        /// <summary>
-        /// Update an existing part (Manager and Admin only)
-        /// </summary>
         [HttpPut("{id:int}")]
         [Authorize]
         public async Task<IActionResult> UpdatePart(
@@ -148,9 +136,6 @@ namespace CarPairs.API.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Delete a part (Admin only)
-        /// </summary>
         [HttpDelete("{id:int}")]
         [Authorize]
         public async Task<IActionResult> DeletePart(

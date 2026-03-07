@@ -22,9 +22,7 @@ namespace CarPairs.Core
         [StringLength(200)]
         public string? Website { get; set; }
 
-        /// <summary>
-        /// Foreign key to Organization for multi-tenancy
-        /// </summary>
+ 
         [Required]
         [ForeignKey("Organization")]
         public int OrganizationId { get; set; }
@@ -35,7 +33,6 @@ namespace CarPairs.Core
         [Required]
         public DateTime CreatedAt { get; set; }
 
-        // Navigation properties
         public Organization? Organization { get; set; }
         public ICollection<Part> Parts { get; set; } = new List<Part>();
     }

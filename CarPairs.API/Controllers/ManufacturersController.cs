@@ -17,10 +17,7 @@ namespace CarPairs.API.Controllers
         {
             _service = service;
         }
-        
-        /// <summary>
-        /// Get manufacturers lookup for the user's organization
-        /// </summary>
+
         [HttpGet("lookup")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<SimpleLookupDto>>> GetLookup(CancellationToken cancellationToken)
@@ -33,9 +30,7 @@ namespace CarPairs.API.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Get paged list of manufacturers for the user's organization
-        /// </summary>
+ 
         [HttpGet]
         [Authorize]
         public async Task<ActionResult<PagedResult<ManufacturerReadDto>>> GetManufacturers(
@@ -63,9 +58,7 @@ namespace CarPairs.API.Controllers
             return Ok(dto);
         }
 
-        /// <summary>
-        /// Get manufacturer by id
-        /// </summary>
+     
         [HttpGet("{id:int}")]
         [Authorize]
         public async Task<ActionResult<ManufacturerReadDto>> GetManufacturer(int id, CancellationToken cancellationToken)
@@ -82,9 +75,6 @@ namespace CarPairs.API.Controllers
             return Ok(MapToReadDto(manufacturer));
         }
 
-        /// <summary>
-        /// Create a manufacturer (Manager and Admin only)
-        /// </summary>
         [HttpPost]
         [Authorize]
         public async Task<ActionResult> CreateManufacturer([FromBody] ManufacturerCreateDto dto, CancellationToken cancellationToken)
@@ -118,9 +108,7 @@ namespace CarPairs.API.Controllers
             return CreatedAtAction(nameof(GetManufacturer), new { id = newId }, new { id = newId });
         }
 
-        /// <summary>
-        /// Update a manufacturer (Manager and Admin only)
-        /// </summary>
+     
         [HttpPut("{id:int}")]
         [Authorize]
         public async Task<IActionResult> UpdateManufacturer(int id, [FromBody] ManufacturerUpdateDto dto, CancellationToken cancellationToken)
@@ -161,9 +149,6 @@ namespace CarPairs.API.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Delete a manufacturer (Admin only)
-        /// </summary>
         [HttpDelete("{id:int}")]
         [Authorize]
         public async Task<IActionResult> DeleteManufacturer(int id, CancellationToken cancellationToken)
